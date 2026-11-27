@@ -49,7 +49,10 @@ int main()
     CHECK(!Validator::parseDate("00.01.2000", d));
     CHECK(!Validator::parseDate("01.01.2999", d));
     CHECK(!Validator::parseDate("2000-01-01", d));
-
+    // addresses
+    CHECK(Validator::normalizeAddress("  г. Санкт-Петербург, ул. Политехническая, д. 29, кв. 5 ", o));
+    CHECK(!Validator::normalizeAddress("Rue <script>", o));
+    CHECK(!Validator::normalizeAddress("   ", o));
     if (failures == 0)
         std::cout << "All tests passed\n";
     return failures == 0 ? 0 : 1;

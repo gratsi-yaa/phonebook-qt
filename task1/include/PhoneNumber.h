@@ -27,3 +27,23 @@ inline const char *toString(PhoneType t)
     }
     return "work";
 }
+
+inline bool phoneTypeFromString(const std::string &s, PhoneType &out)
+{
+    if (s == "work")
+    {
+        out = PhoneType::Work;
+        return true;
+    }
+    if (s == "home")
+    {
+        out = PhoneType::Home;
+        return true;
+    }
+    if (s == "service")
+    {
+        out = PhoneType::Service;
+        return true;
+    }
+    return false;
+}

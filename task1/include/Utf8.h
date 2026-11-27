@@ -55,3 +55,31 @@ inline bool utf8ToWide(const std::string &s, std::wstring &out)
     }
     return true;
 }
+
+// Lower-case for Latin and Cyrillic (deterministic on every platform).
+inline std::wstring toLowerWide(std::wstring w)
+{
+    for (auto &ch : w)
+    {
+        if (ch >= L'A' && ch <= L'Z')
+            ch += 32;
+        else if (ch >= 0x0410 && ch <= 0x042F)
+            ch += 32;
+        else if (ch == 0x0401)
+            ch = 0x0451;
+    }
+    return w;
+}
+
+inline std::wstring lowerKey(const std::string &s)
+{
+    std::wstring w;
+    if (!utf8ToWide(s, w))
+        w.assign(s.begin(), s.end());
+    return toLowerWide(w);
+}
+
+inline bool containsIgnoreCase(const std::string &haystack, const std::string &needle)
+{
+    return lowerKey(haystack).find(lowerKey(needle)) != std::wstring::npos;
+}

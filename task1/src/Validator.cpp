@@ -86,3 +86,17 @@ bool Validator::parseDate(const std::string &in, Date &out)
     out = date;
     return true;
 }
+// Letters (Latin + Cyrillic), digits, spaces and . , / # ( ) № -
+bool Validator::normalizeAddress(const std::string &in, std::string &out)
+{
+    std::string t = trim(in);
+    std::wstring w;
+    if (t.empty() || !utf8ToWide(t, w))
+        return false;
+    static const std::wregex re(
+        L"^[A-Za-z0-9\u0401\u0410-\u044F\u0451 .,/#()\u2116-]+$");
+    if (!std::regex_match(w, re))
+        return false;
+    out = t;
+    return true;
+}

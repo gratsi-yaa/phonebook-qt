@@ -7,6 +7,7 @@
 
 struct Contact
 {
+    int id = 0;                      // assigned by the storage
     std::string firstName;           // required
     std::string lastName;            // required
     std::string middleName;          // optional
