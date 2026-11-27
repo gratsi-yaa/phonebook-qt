@@ -1,8 +1,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QMessageBox>
-#include <memory>
-#include "FileStorage.h"
+#include "Config.h"
 #include "MainWindow.h"
 #include "PhoneBook.h"
 
@@ -10,14 +9,25 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    // The data file lives next to the executable. Changing the working
-    // directory avoids passing non-ASCII Windows paths to std::ofstream.
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    // Relative paths (config, data file) are relative to the executable.
+    // Changing the working directory also avoids passing non-ASCII Windows
+    // paths to std::ofstream.
+    const QString appDir = QCoreApplication::applicationDirPath();
+    QDir::setCurrent(appDir);
 
     try
     {
-        PhoneBook book(std::make_unique<FileStorage>("data/contacts.txt"));
+        // Optional argument: path to another configuration file.
+        const QStringList args = app.arguments();
+        const QString configPath = args.size() > 1 ? args[1] : QDir(appDir).absoluteFilePath("config.ini");
+
+        const AppConfig config = AppConfig::load(configPath);
+        PhoneBook book(createStorage(config));
+
         MainWindow window(book);
+        window.setWindowTitle(window.windowTitle() + (config.storage == AppConfig::StorageType::Postgres
+                                                          ? " [PostgreSQL]"
+                                                          : " [file]"));
         window.show();
         return app.exec();
     }
