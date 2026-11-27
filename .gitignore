@@ -67,3 +67,8 @@ vcpkg_installed/
 Testing/
 .cache/
 task1/data/contacts.txt
+build*/
+*.user
+task2/build/
+*.user
+task2/data/
